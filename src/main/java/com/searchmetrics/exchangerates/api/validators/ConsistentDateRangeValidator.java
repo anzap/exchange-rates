@@ -1,6 +1,6 @@
-package com.searchmetrics.exchangerates.controllers.validators;
+package com.searchmetrics.exchangerates.api.validators;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -13,8 +13,13 @@ public class ConsistentDateRangeValidator
 
   @Override
   public boolean isValid(Object[] value, ConstraintValidatorContext context) {
-    LocalDate from = (LocalDate) value[0];
-    LocalDate to = (LocalDate) value[1];
+    LocalDateTime from = (LocalDateTime) value[0];
+    LocalDateTime to = (LocalDateTime) value[1];
+    
+    // We do not support not passing in any date range
+    if (from == null && to == null) {
+    	return false;
+    }
     
     // We do not support defining just the end date
     if (from == null && to != null) {

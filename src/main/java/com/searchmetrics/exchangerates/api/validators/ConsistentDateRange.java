@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.controllers.validators;
+package com.searchmetrics.exchangerates.api.validators;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

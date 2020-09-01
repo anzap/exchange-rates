@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.controllers.errors;
+package com.searchmetrics.exchangerates.api.errors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 

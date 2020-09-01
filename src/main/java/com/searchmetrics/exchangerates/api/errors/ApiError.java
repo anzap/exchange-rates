@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.controllers.errors;
+package com.searchmetrics.exchangerates.api.errors;
 
 import java.time.Instant;
 import java.util.ArrayList;

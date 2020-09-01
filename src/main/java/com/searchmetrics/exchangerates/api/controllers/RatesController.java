@@ -1,6 +1,6 @@
-package com.searchmetrics.exchangerates.controllers;
+package com.searchmetrics.exchangerates.api.controllers;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.searchmetrics.exchangerates.controllers.validators.ConsistentDateRange;
+import com.searchmetrics.exchangerates.api.validators.ConsistentDateRange;
 
 @RestController
 @RequestMapping("/api/rates")
@@ -25,8 +25,8 @@ public class RatesController {
 	@GetMapping(value = "/snapshots")
 	@ConsistentDateRange
 	public void getRates(
-			@RequestParam(name = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-			@RequestParam(name = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+			@RequestParam(name = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+			@RequestParam(name = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
 		System.out.println("RatesController.getRates()");
 	}
 
