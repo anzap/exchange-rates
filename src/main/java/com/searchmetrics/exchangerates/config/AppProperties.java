@@ -17,7 +17,7 @@ public class AppProperties {
 	@Getter
 	@RequiredArgsConstructor
 	public static class Providers {
-		private final ProviderConfig blockchain;
+		private final ProviderConfig bitpay;
 	}
 
 	@Getter
@@ -25,5 +25,6 @@ public class AppProperties {
 	public static class ProviderConfig {
 		private final String baseurl;
 		private final Long timeout;
+		private final String refreshRate;
 	}
 }

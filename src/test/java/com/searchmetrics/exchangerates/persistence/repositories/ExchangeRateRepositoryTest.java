@@ -22,12 +22,13 @@ public class ExchangeRateRepositoryTest {
 	@Test
 	void save() {
 
-		ExchangeRate saved = repo.save(ExchangeRate.builder().fromCurrency("BTC").toCurrency("USD")
+		ExchangeRate saved = repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD")
 				.exchangeRate(BigDecimal.valueOf(0.000078)).build());
 
 		assertThat(saved.getId()).isNotNull();
 		assertThat(saved.getCreatedAt()).isNotNull();
 		assertThat(saved.getUpdatedAt()).isNotNull();
+		assertThat(saved.getProviderName()).isEqualTo("test");
 		assertThat(saved.getFromCurrency()).isEqualTo("BTC");
 		assertThat(saved.getToCurrency()).isEqualTo("USD");
 		assertThat(saved.getExchangeRate()).isEqualTo(BigDecimal.valueOf(0.000078));
@@ -38,15 +39,15 @@ public class ExchangeRateRepositoryTest {
 	void dateRangeQuery() {
 
 		ExchangeRate first = repo.save(
-				ExchangeRate.builder().fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
+				ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
 						.createdAt(LocalDateTime.of(2020, 8, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
 		ExchangeRate second = repo.save(
-				ExchangeRate.builder().fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
+				ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
 						.createdAt(LocalDateTime.of(2020, 9, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
 		ExchangeRate third = repo.save(
-				ExchangeRate.builder().fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
+				ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
 						.createdAt(LocalDateTime.of(2020, 10, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
 		List<ExchangeRate> results = repo.findAll(ExchangeRateSpecifications

@@ -77,22 +77,27 @@ public class BitPayExchangeRateProvider implements CurrencyExchangeRateProvider 
 	        TcpClient.create()
 	            .option(
 	                ChannelOption.CONNECT_TIMEOUT_MILLIS,
-	                config.getProviders().getBlockchain().getTimeout().intValue())
+	                config.getProviders().getBitpay().getTimeout().intValue())
 	            .doOnConnected(
 	                connection -> {
 	                  connection.addHandlerLast(
 	                      new ReadTimeoutHandler(
-	                          config.getProviders().getBlockchain().getTimeout(),
+	                          config.getProviders().getBitpay().getTimeout(),
 	                          TimeUnit.MILLISECONDS));
 	                  connection.addHandlerLast(
 	                      new WriteTimeoutHandler(
-	                          config.getProviders().getBlockchain().getTimeout(),
+	                          config.getProviders().getBitpay().getTimeout(),
 	                          TimeUnit.MILLISECONDS));
 	                });
 	    return WebClient.builder()
 	        .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
-	        .baseUrl(config.getProviders().getBlockchain().getBaseurl())
+	        .baseUrl(config.getProviders().getBitpay().getBaseurl())
 	        .build();
 	  }
+
+	@Override
+	public String name() {
+		return "BitPay";
+	}
 
 }

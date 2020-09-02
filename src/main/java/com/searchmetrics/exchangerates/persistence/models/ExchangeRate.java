@@ -25,6 +25,10 @@ public class ExchangeRate extends PersistentEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name = "provider_name", nullable = false)
+	@NotNull
+	private String providerName;
 
 	@Column(name = "from_currency", nullable = false)
 	@NotNull

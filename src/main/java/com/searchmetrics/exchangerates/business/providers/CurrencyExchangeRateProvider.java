@@ -6,4 +6,6 @@ import java.util.Optional;
 public interface CurrencyExchangeRateProvider {
 
 	Optional<BigDecimal> conversionRate(String from, String to);
+	
+	String name();
 }

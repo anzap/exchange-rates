@@ -47,7 +47,7 @@ public class BitPayExchangeRateProviderTest {
 	@BeforeEach
 	void initialize() {
 		String baseUrl = String.format("http://localhost:%s", mockBackEnd.getPort());
-		provider = new BitPayExchangeRateProvider(new AppProperties(new Providers(new ProviderConfig(baseUrl, 500L))));
+		provider = new BitPayExchangeRateProvider(new AppProperties(new Providers(new ProviderConfig(baseUrl, 500L, ""))));
 	}
 
 	@Test
