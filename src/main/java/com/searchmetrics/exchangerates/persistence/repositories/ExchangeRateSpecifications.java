@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.peristence.repositories;
+package com.searchmetrics.exchangerates.persistence.repositories;
 
 import java.time.Instant;
 
@@ -9,8 +9,8 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.searchmetrics.exchangerates.peristence.models.ExchangeRate;
-import com.searchmetrics.exchangerates.peristence.models.ExchangeRate_;
+import com.searchmetrics.exchangerates.persistence.models.ExchangeRate;
+import com.searchmetrics.exchangerates.persistence.models.ExchangeRate_;
 
 public class ExchangeRateSpecifications {
 

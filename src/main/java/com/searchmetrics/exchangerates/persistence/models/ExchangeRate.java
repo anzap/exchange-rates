@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.peristence.models;
+package com.searchmetrics.exchangerates.persistence.models;
 
 import java.math.BigDecimal;
 

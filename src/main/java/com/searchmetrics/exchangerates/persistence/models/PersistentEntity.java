@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.peristence.models;
+package com.searchmetrics.exchangerates.persistence.models;
 
 import java.io.Serializable;
 import java.time.Instant;

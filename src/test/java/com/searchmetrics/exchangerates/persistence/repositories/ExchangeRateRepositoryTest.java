@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import com.searchmetrics.exchangerates.peristence.models.ExchangeRate;
-import com.searchmetrics.exchangerates.peristence.repositories.ExchangeRateRepository;
-import com.searchmetrics.exchangerates.peristence.repositories.ExchangeRateSpecifications;
+import com.searchmetrics.exchangerates.persistence.models.ExchangeRate;
 
 @DataJpaTest
 public class ExchangeRateRepositoryTest {
