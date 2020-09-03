@@ -36,31 +36,39 @@ public class ExchangeRateService {
 	private final CurrencyExchangeRateProvider provider;
 	private final RateResponseMapper mapper;
 
-	public RateResponse latestRate() {
+	public RateResponse latestRate(String in, String out) {
 		
-		log.info("Calculating latest exchange rate");
+		log.info("Calculating latest exchange rate between {} and {}", in, out);
 
 		try {
-			Optional<BigDecimal> conversionRate = provider.conversionRate("BTC", "USD");
+			Optional<BigDecimal> conversionRate = provider.conversionRate(in, out);
 
 			if (conversionRate.isEmpty()) {
 				log.warn("Provider did not return exchange rate, falling back to database.");
-				return latestFromDB();
+				return latestFromDB(in, out);
 			}
 
-			return RateResponse.builder().from("BTC").to("USD").provider(provider.name()).lastUpdated(Instant.now())
+			return RateResponse.builder().from(in).to(out).provider(provider.name()).lastUpdated(Instant.now())
 					.exchangeRate(conversionRate.get()).build();
 
 		} catch (ProviderException e) {
 			log.error("Error getting exchange rate from provider, falling back to database.", e);
-			return latestFromDB();
+			return latestFromDB(in, out);
 		}
 
 	}
 
-	public List<RateResponse> rateSnapshots(LocalDateTime from, LocalDateTime to) {
+	public List<RateResponse> rateSnapshots(String in, String out, LocalDateTime from, LocalDateTime to) {
 
 		Specification<ExchangeRate> spec = Specification.where(null);
+		
+		if (in != null) {
+			spec = spec.and(ExchangeRateSpecifications.fromCurrency(in));
+		}
+		
+		if (out != null) {
+			spec = spec.and(ExchangeRateSpecifications.toCurrency(out));
+		}
 
 		if (from != null) {
 			spec = spec.and(ExchangeRateSpecifications.after(from.atZone(ZoneOffset.UTC).toInstant()));
@@ -74,8 +82,8 @@ public class ExchangeRateService {
 				.collect(Collectors.toList());
 	}
 
-	private RateResponse latestFromDB() {
-		return repo.findTopByOrderByCreatedAtDesc().map(mapper)
+	private RateResponse latestFromDB(String in, String out) {
+		return repo.findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc(in, out).map(mapper)
 				.orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND,
 						"Conversion rate for provided currencies not found."));
 	}

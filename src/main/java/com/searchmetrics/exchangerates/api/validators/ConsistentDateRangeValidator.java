@@ -13,8 +13,8 @@ public class ConsistentDateRangeValidator
 
   @Override
   public boolean isValid(Object[] value, ConstraintValidatorContext context) {
-    LocalDateTime from = (LocalDateTime) value[0];
-    LocalDateTime to = (LocalDateTime) value[1];
+    LocalDateTime from = (LocalDateTime) value[2];
+    LocalDateTime to = (LocalDateTime) value[3];
     
     // We do not support not passing in any date range
     if (from == null && to == null) {

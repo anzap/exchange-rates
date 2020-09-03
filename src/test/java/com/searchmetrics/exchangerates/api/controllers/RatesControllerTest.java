@@ -40,7 +40,7 @@ public class RatesControllerTest {
 	@Test
 	void latestRate() throws Exception {
 		
-		when(service.latestRate()).thenReturn(
+		when(service.latestRate("BTC", "USD")).thenReturn(
 				RateResponse.builder()
 				.from("BTC")
 				.to("USD")
@@ -57,14 +57,14 @@ public class RatesControllerTest {
 			.andExpect(jsonPath("$.provider", is("test")))
 			.andExpect(jsonPath("$.lastUpdated", is("2020-09-01T00:00:00Z")));
 		
-		verify(service, times(1)).latestRate();
+		verify(service, times(1)).latestRate("BTC", "USD");
 
 	}
 	
 	@Test
 	void latestRateNotFoundError() throws Exception {
 		
-		when(service.latestRate()).thenThrow(new BusinessException(HttpStatus.NOT_FOUND,
+		when(service.latestRate("BTC", "USD")).thenThrow(new BusinessException(HttpStatus.NOT_FOUND,
 						"Conversion rate for provided currencies not found."));
 
 		mvc.perform(get("/api/rates"))
@@ -75,14 +75,14 @@ public class RatesControllerTest {
 			.andExpect(jsonPath("$.method", is("GET")))
 			.andExpect(jsonPath("$.errors[0].message", is("Conversion rate for provided currencies not found.")));
 		
-		verify(service, times(1)).latestRate();
+		verify(service, times(1)).latestRate("BTC", "USD");
 
 	}
 
 	@Test
 	void rateSnapshotsFrom() throws Exception {
 		
-		when(service.rateSnapshots(LocalDateTime.of(2020, 8, 1, 10, 0), null)).thenReturn(
+		when(service.rateSnapshots("BTC", "USD", LocalDateTime.of(2020, 8, 1, 10, 0), null)).thenReturn(
 				List.of(
 						RateResponse.builder()
 						.provider("test").from("BTC").to("USD").exchangeRate(BigDecimal.valueOf(0.01))
@@ -107,14 +107,14 @@ public class RatesControllerTest {
 			.andExpect(jsonPath("$[1].provider", is("test")))
 			.andExpect(jsonPath("$[1].lastUpdated", is("2020-08-03T00:00:00Z")));
 		
-		verify(service, times(1)).rateSnapshots(LocalDateTime.of(2020, 8, 1, 10, 0), null);
+		verify(service, times(1)).rateSnapshots("BTC", "USD", LocalDateTime.of(2020, 8, 1, 10, 0), null);
 
 	}
 	
 	@Test
 	void rateSnapshotsBetween() throws Exception {
 		
-		when(service.rateSnapshots(LocalDateTime.of(2020, 7, 1, 9, 0), LocalDateTime.of(2020, 8, 1, 10, 0))).thenReturn(
+		when(service.rateSnapshots("BTC", "USD", LocalDateTime.of(2020, 7, 1, 9, 0), LocalDateTime.of(2020, 8, 1, 10, 0))).thenReturn(
 				List.of(
 						RateResponse.builder()
 						.provider("test").from("BTC").to("USD").exchangeRate(BigDecimal.valueOf(0.01))
@@ -139,7 +139,7 @@ public class RatesControllerTest {
 				.andExpect(jsonPath("$[1].provider", is("test")))
 				.andExpect(jsonPath("$[1].lastUpdated", is("2020-08-03T00:00:00Z")));
 		
-		verify(service, times(1)).rateSnapshots(LocalDateTime.of(2020, 7, 1, 9, 0), LocalDateTime.of(2020, 8, 1, 10, 0));
+		verify(service, times(1)).rateSnapshots("BTC", "USD", LocalDateTime.of(2020, 7, 1, 9, 0), LocalDateTime.of(2020, 8, 1, 10, 0));
 
 	}
 

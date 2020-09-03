@@ -59,7 +59,7 @@ public class ExchangeRateServiceTest {
 		when(provider.conversionRate("BTC", "USD")).thenReturn(Optional.of(BigDecimal.valueOf(0.01)));
 		when(provider.name()).thenReturn("test");
 		
-		RateResponse result = service.latestRate();
+		RateResponse result = service.latestRate("BTC", "USD");
 		
 		assertThat(result).isNotNull();
 		assertThat(result.getExchangeRate()).isEqualTo(BigDecimal.valueOf(0.01));
@@ -77,12 +77,12 @@ public class ExchangeRateServiceTest {
 	void latestRateProviderNoResultDBFallback() {
 		
 		when(provider.conversionRate("BTC", "USD")).thenReturn(Optional.empty());
-		when(repo.findTopByOrderByCreatedAtDesc())
+		when(repo.findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD"))
 			.thenReturn(Optional.of(ExchangeRate.builder().id(1L).fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.01))
 					.providerName("test").createdAt(LocalDate.of(2020, 9, 1).atStartOfDay().toInstant(ZoneOffset.UTC))
 					.updatedAt(LocalDate.of(2020, 9, 2).atStartOfDay().toInstant(ZoneOffset.UTC)).build()));
 		
-		RateResponse result = service.latestRate();
+		RateResponse result = service.latestRate("BTC", "USD");
 		
 		assertThat(result).isNotNull();
 		assertThat(result.getExchangeRate()).isEqualTo(BigDecimal.valueOf(0.01));
@@ -93,19 +93,19 @@ public class ExchangeRateServiceTest {
 		
 		verify(provider, times(1)).conversionRate("BTC", "USD");
 		verify(provider, times(0)).name();
-		verify(repo, times(1)).findTopByOrderByCreatedAtDesc();
+		verify(repo, times(1)).findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD");
 	}
 	
 	@Test
 	void latestRateProviderErrorDBFallback() {
 		
 		when(provider.conversionRate("BTC", "USD")).thenThrow(ProviderException.class);
-		when(repo.findTopByOrderByCreatedAtDesc())
+		when(repo.findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD"))
 			.thenReturn(Optional.of(ExchangeRate.builder().id(1L).fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.01))
 					.providerName("test").createdAt(LocalDate.of(2020, 9, 1).atStartOfDay().toInstant(ZoneOffset.UTC))
 					.updatedAt(LocalDate.of(2020, 9, 2).atStartOfDay().toInstant(ZoneOffset.UTC)).build()));
 		
-		RateResponse result = service.latestRate();
+		RateResponse result = service.latestRate("BTC", "USD");
 		
 		assertThat(result).isNotNull();
 		assertThat(result.getExchangeRate()).isEqualTo(BigDecimal.valueOf(0.01));
@@ -116,39 +116,39 @@ public class ExchangeRateServiceTest {
 		
 		verify(provider, times(1)).conversionRate("BTC", "USD");
 		verify(provider, times(0)).name();
-		verify(repo, times(1)).findTopByOrderByCreatedAtDesc();
+		verify(repo, times(1)).findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD");
 	}
 	
 	@Test
 	void latestRateProviderErrorDBFallbackNoResult() {
 		
 		when(provider.conversionRate("BTC", "USD")).thenThrow(ProviderException.class);
-		when(repo.findTopByOrderByCreatedAtDesc()).thenReturn(Optional.empty());
+		when(repo.findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD")).thenReturn(Optional.empty());
 		
-		BusinessException exception = assertThrows(BusinessException.class, () -> service.latestRate());
+		BusinessException exception = assertThrows(BusinessException.class, () -> service.latestRate("BTC", "USD"));
 		
 		assertThat(exception.getReason()).isEqualTo("Conversion rate for provided currencies not found.");
 		assertThat(exception.getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
 		
 		verify(provider, times(1)).conversionRate("BTC", "USD");
 		verify(provider, times(0)).name();
-		verify(repo, times(1)).findTopByOrderByCreatedAtDesc();
+		verify(repo, times(1)).findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD");
 	}
 	
 	@Test
 	void latestRateProviderNoResultDBFallbackNoResult() {
 		
 		when(provider.conversionRate("BTC", "USD")).thenReturn(Optional.empty());
-		when(repo.findTopByOrderByCreatedAtDesc()).thenReturn(Optional.empty());
+		when(repo.findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD")).thenReturn(Optional.empty());
 		
-		BusinessException exception = assertThrows(BusinessException.class, () -> service.latestRate());
+		BusinessException exception = assertThrows(BusinessException.class, () -> service.latestRate("BTC", "USD"));
 		
 		assertThat(exception.getReason()).isEqualTo("Conversion rate for provided currencies not found.");
 		assertThat(exception.getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
 		
 		verify(provider, times(1)).conversionRate("BTC", "USD");
 		verify(provider, times(0)).name();
-		verify(repo, times(1)).findTopByOrderByCreatedAtDesc();
+		verify(repo, times(1)).findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD");
 	}
 	
 	@Test
@@ -174,7 +174,7 @@ public class ExchangeRateServiceTest {
 				));
 		
 		
-		List<RateResponse> results = service.rateSnapshots(LocalDateTime.of(2020, 9, 1, 10, 0), null);
+		List<RateResponse> results = service.rateSnapshots("BTC", "USD", LocalDateTime.of(2020, 9, 1, 10, 0), null);
 		
 		assertThat(results).isNotNull();
 		assertThat(results).hasSize(2);

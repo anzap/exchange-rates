@@ -27,19 +27,23 @@ public class RatesController {
 	private final ExchangeRateService service;
 	
 	@GetMapping
-	public RateResponse latestRate() {
+	public RateResponse latestRate(
+			@RequestParam(value = "in", defaultValue = "BTC") String in,
+            @RequestParam(value = "out", defaultValue = "USD") String out) {
 		log.info("Getting latest rate");
-		return service.latestRate();
+		return service.latestRate(in, out);
 	}
 
 
 	@GetMapping(value = "/snapshots")
 	@ConsistentDateRange
 	public List<RateResponse> rateSnapshots(
+			@RequestParam(value = "in", defaultValue = "BTC") String in,
+            @RequestParam(value = "out", defaultValue = "USD") String out,
 			@RequestParam(name = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
 			@RequestParam(name = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
 		log.info("Getting historic rates");
-		return service.rateSnapshots(from, to);
+		return service.rateSnapshots(in, out, from, to);
 	}
 
 }

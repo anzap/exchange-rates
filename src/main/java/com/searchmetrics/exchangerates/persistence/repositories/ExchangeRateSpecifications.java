@@ -13,6 +13,30 @@ import com.searchmetrics.exchangerates.persistence.models.ExchangeRate;
 import com.searchmetrics.exchangerates.persistence.models.ExchangeRate_;
 
 public class ExchangeRateSpecifications {
+	
+	public static Specification<ExchangeRate> fromCurrency(String currency) {
+
+		return new Specification<ExchangeRate>() {
+
+			@Override
+			public Predicate toPredicate(Root<ExchangeRate> root, CriteriaQuery<?> query,
+					CriteriaBuilder criteriaBuilder) {
+				return criteriaBuilder.equal(root.get(ExchangeRate_.fromCurrency), currency);
+			}
+		};
+	}
+	
+	public static Specification<ExchangeRate> toCurrency(String currency) {
+
+		return new Specification<ExchangeRate>() {
+
+			@Override
+			public Predicate toPredicate(Root<ExchangeRate> root, CriteriaQuery<?> query,
+					CriteriaBuilder criteriaBuilder) {
+				return criteriaBuilder.equal(root.get(ExchangeRate_.toCurrency), currency);
+			}
+		};
+	}
 
 	public static Specification<ExchangeRate> after(Instant date) {
 

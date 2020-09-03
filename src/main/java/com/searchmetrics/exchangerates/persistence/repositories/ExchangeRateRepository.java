@@ -9,6 +9,6 @@ import com.searchmetrics.exchangerates.persistence.models.ExchangeRate;
 
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long>, JpaSpecificationExecutor<ExchangeRate> {
 	
-	Optional<ExchangeRate> findTopByOrderByCreatedAtDesc();
+	Optional<ExchangeRate> findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc(String fromCurrency, String toCurrency);
 
 }

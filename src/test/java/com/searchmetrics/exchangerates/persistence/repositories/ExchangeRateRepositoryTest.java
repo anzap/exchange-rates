@@ -89,7 +89,7 @@ public class ExchangeRateRepositoryTest {
 				.toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
 				.createdAt(LocalDateTime.of(2020, 10, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
-		Optional<ExchangeRate> result = repo.findTopByOrderByCreatedAtDesc();
+		Optional<ExchangeRate> result = repo.findTopByFromCurrencyAndToCurrencyOrderByCreatedAtDesc("BTC", "USD");
 
 		assertThat(result).isNotEmpty();
 		assertThat(result.get()).isEqualTo(latest);
