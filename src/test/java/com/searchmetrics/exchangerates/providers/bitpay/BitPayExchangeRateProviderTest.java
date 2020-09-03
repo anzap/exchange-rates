@@ -20,7 +20,6 @@ import com.searchmetrics.exchangerates.config.AppProperties.ProviderConfig;
 import com.searchmetrics.exchangerates.config.AppProperties.Providers;
 import com.searchmetrics.exchangerates.providers.exceptions.ProviderException;
 
-import io.netty.handler.timeout.ReadTimeoutException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.SocketPolicy;
@@ -120,7 +119,7 @@ public class BitPayExchangeRateProviderTest {
 		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
-		assertThat(exception.getReason()).isEqualTo("No exchange rate could be calculated for provided currencies!");
+		assertThat(exception.getReason()).isEqualTo("No exchange rate could be calculated for provided currencies.");
 		assertThat(exception.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
@@ -133,18 +132,27 @@ public class BitPayExchangeRateProviderTest {
 		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
-		assertThat(exception.getReason()).isEqualTo("Rate provider connection failing!");
+		assertThat(exception.getReason()).isEqualTo("Rate provider connection failure.");
 		assertThat(exception.getStatus()).isEqualTo(HttpStatus.BAD_GATEWAY);
+	}
+	
+	@Test
+	void providerNetworkConnectionError() {
+
+		mockBackEnd.enqueue(
+				new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_DURING_REQUEST_BODY));
+
+		assertThrows(ProviderException.class, () -> provider.conversionRate("BTC", "USD"));
+
 	}
 
 	@Test
 	void providerTimeoutError() {
 
 		mockBackEnd.enqueue(
-				new MockResponse().setBody("{\"data\": {\"code\":\"USD\",\"name\":\"US Dollar\",\"rate\":11513.27}}")
-						.addHeader("Content-Type", "application/json").setSocketPolicy(SocketPolicy.NO_RESPONSE));
+				new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
 
-		assertThrows(ReadTimeoutException.class, () -> provider.conversionRate("BTC", "USD"));
+		assertThrows(ProviderException.class, () -> provider.conversionRate("BTC", "USD"));
 
 	}
 

@@ -24,6 +24,7 @@ import com.searchmetrics.exchangerates.persistence.repositories.ExchangeRateSpec
 import com.searchmetrics.exchangerates.providers.CurrencyExchangeRateProvider;
 import com.searchmetrics.exchangerates.providers.exceptions.ProviderException;
 
+import io.netty.handler.timeout.ReadTimeoutException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,0 +1,1 @@
+DELETE FROM `exhange_rates`;

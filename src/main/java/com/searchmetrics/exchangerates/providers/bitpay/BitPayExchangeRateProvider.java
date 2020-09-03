@@ -17,6 +17,7 @@ import com.searchmetrics.exchangerates.providers.exceptions.ProviderException;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.TimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -31,7 +32,8 @@ public class BitPayExchangeRateProvider implements CurrencyExchangeRateProvider 
 
 	@Override
 	public Optional<BigDecimal> conversionRate(String from, String to) {
-		return client()
+//		try {
+			return client()
 		        .get()
 		        .uri(uriBuilder -> uriBuilder.path("/rates/{from}/{to}").build(from, to))
 		        .accept(APPLICATION_JSON)
@@ -43,16 +45,23 @@ public class BitPayExchangeRateProvider implements CurrencyExchangeRateProvider 
 		                Mono.error(
 		                    new ProviderException(
 		                        HttpStatus.BAD_REQUEST,
-		                        "No exchange rate could be calculated for provided currencies!")))
+		                        "No exchange rate could be calculated for provided currencies.")))
 		        .onStatus(
 		                HttpStatus::is5xxServerError,
 		                response ->
 		                    Mono.error(
 		                        new ProviderException(
 		                            HttpStatus.BAD_GATEWAY,
-		                            "Rate provider connection failing!")))
+		                            "Rate provider connection failure.")))
 		        .bodyToMono(ApiResponse.class)
 		        .log()
+		        .onErrorResume(e -> {
+		        	if (e instanceof ProviderException) {
+		        		return Mono.error(e);
+		        	}
+		        	
+		        	return Mono.error(new ProviderException(HttpStatus.BAD_GATEWAY, "Rate provider connection failure.")); 
+		        })
 		        .blockOptional()
 		        .map(r -> {
 		        	
@@ -68,6 +77,9 @@ public class BitPayExchangeRateProvider implements CurrencyExchangeRateProvider 
 		        	
 		        })
 		        .orElseThrow(() -> new ProviderException(HttpStatus.BAD_GATEWAY, "Unexpected response from bitpay provider received!"));
+//		} catch (TimeoutException e) {
+//			throw new ProviderException(HttpStatus.BAD_GATEWAY, "Rate provider connection failure.");
+//		}
 		
 		
 	}
