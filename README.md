@@ -24,7 +24,7 @@ Endpoints created as part of the exercise are `/api/rates` and `/api/rates/snaps
 The network call is using Spring Reactive Webclient project as a network client implementation.
 
 * `business` package - Contains the core logic of the application. Main entrypoints are `ExchangeRateCollector`, a recurrent task to poll the providers for exchange rate information and save it to db. Secondly there is `ExchangeRateService` which serves requests coming in from controller and reports back results. `ExchangeRateService` has 2 methods to get latest rate for a currency set and get historic rates for a specific period.  
-Historic rates are coming from database, while latest rate information is coming from the provider and if an error occurs, then falls back to database to get last saved information, if any.  
+Historic rates are being read from database, while latest rate information is coming from the provider and, if an error occurs, then falls back to database to get last saved information, if any.  
 Package also contains DTOs used to wrap information served as JSON through the api as well as a mapper to convert from entity to DTO.  
 
 Tech stack:
@@ -67,4 +67,4 @@ Easiest way to test the provided API is through the integrates swagger-ui applic
 
 The obvious improvement that needs to be made to move to production would be to use a persistent medium to store rate information.  
 Easiest solution as it is now would be to move to a relational database, but depending on the deployment environment another solution like for ex. ElasticSearch could be used that is easier to scale horizontaly if needed.  
-If we stick with the relational database then a performance improvement that should be made is to mark the latest exchange rate entry in the db table at the time of insertion, as the current code uses `MAX(created_at)` to get the most recent entry, which will not be very efficient as the time goes on. 
+If we stick with the relational database then a performance improvement that should be made is to mark the latest exchange rate entry in the db table at the time of insertion, as the current code uses `MAX(created_at)` to get the most recent entry, which will not be very efficient as the time goes on and the table grows. 
