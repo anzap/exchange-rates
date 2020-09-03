@@ -17,7 +17,6 @@ import com.searchmetrics.exchangerates.providers.exceptions.ProviderException;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.TimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
