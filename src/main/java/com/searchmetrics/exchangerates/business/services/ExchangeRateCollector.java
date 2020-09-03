@@ -8,9 +8,9 @@ import javax.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.searchmetrics.exchangerates.business.providers.CurrencyExchangeRateProvider;
 import com.searchmetrics.exchangerates.persistence.models.ExchangeRate;
 import com.searchmetrics.exchangerates.persistence.repositories.ExchangeRateRepository;
+import com.searchmetrics.exchangerates.providers.CurrencyExchangeRateProvider;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

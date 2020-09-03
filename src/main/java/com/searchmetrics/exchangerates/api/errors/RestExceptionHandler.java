@@ -13,6 +13,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.searchmetrics.exchangerates.business.exceptions.BusinessException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -26,6 +28,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     log.error(ex.getMessage(), ex);
     ApiError apiError = new ApiError(BAD_REQUEST);
     apiError.addValidationErrors(ex.getConstraintViolations());
+    return buildResponseEntity(apiError, request);
+  }
+  
+  @ExceptionHandler(BusinessException.class)
+  protected ResponseEntity<Object> handleBusinessException(
+      BusinessException ex, WebRequest request) {
+    log.error(ex.getMessage(), ex);
+    ApiError apiError = new ApiError(ex.getStatus());
+    apiError.addValidationError(ex.getReason());
     return buildResponseEntity(apiError, request);
   }
 

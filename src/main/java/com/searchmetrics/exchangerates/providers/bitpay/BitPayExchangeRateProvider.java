@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.business.providers.bitpay;
+package com.searchmetrics.exchangerates.providers.bitpay;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -11,9 +11,9 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.searchmetrics.exchangerates.business.exceptions.BusinessException;
-import com.searchmetrics.exchangerates.business.providers.CurrencyExchangeRateProvider;
 import com.searchmetrics.exchangerates.config.AppProperties;
+import com.searchmetrics.exchangerates.providers.CurrencyExchangeRateProvider;
+import com.searchmetrics.exchangerates.providers.exceptions.ProviderException;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -41,14 +41,14 @@ public class BitPayExchangeRateProvider implements CurrencyExchangeRateProvider 
 		            HttpStatus::is4xxClientError,
 		            response ->
 		                Mono.error(
-		                    new BusinessException(
+		                    new ProviderException(
 		                        HttpStatus.BAD_REQUEST,
 		                        "No exchange rate could be calculated for provided currencies!")))
 		        .onStatus(
 		                HttpStatus::is5xxServerError,
 		                response ->
 		                    Mono.error(
-		                        new BusinessException(
+		                        new ProviderException(
 		                            HttpStatus.BAD_GATEWAY,
 		                            "Rate provider connection failing!")))
 		        .bodyToMono(ApiResponse.class)
@@ -57,17 +57,17 @@ public class BitPayExchangeRateProvider implements CurrencyExchangeRateProvider 
 		        .map(r -> {
 		        	
 		        	if (r.getError().isPresent()) {
-						throw new BusinessException(HttpStatus.BAD_GATEWAY, r.getError().get());
+						throw new ProviderException(HttpStatus.BAD_GATEWAY, r.getError().get());
 					}
 		        	
 		        	if (r.getData().isPresent()) {
 		        		return Optional.ofNullable(r.getData().get().getRate());
 		        	}
 		        	
-		        	throw new BusinessException(HttpStatus.BAD_GATEWAY, "Unexpected response from bitpay provider received!");
+		        	throw new ProviderException(HttpStatus.BAD_GATEWAY, "Unexpected response from bitpay provider received!");
 		        	
 		        })
-		        .orElseThrow(() -> new BusinessException(HttpStatus.BAD_GATEWAY, "Unexpected response from bitpay provider received!"));
+		        .orElseThrow(() -> new ProviderException(HttpStatus.BAD_GATEWAY, "Unexpected response from bitpay provider received!"));
 		
 		
 	}

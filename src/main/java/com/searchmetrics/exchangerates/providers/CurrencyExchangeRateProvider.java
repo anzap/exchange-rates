@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.business.providers;
+package com.searchmetrics.exchangerates.providers;
 
 import java.math.BigDecimal;
 import java.util.Optional;

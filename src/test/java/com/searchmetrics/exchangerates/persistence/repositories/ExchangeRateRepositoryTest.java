@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,38 +39,60 @@ public class ExchangeRateRepositoryTest {
 	@Test
 	void dateRangeQuery() {
 
-		ExchangeRate first = repo.save(
-				ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
-						.createdAt(LocalDateTime.of(2020, 8, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
+		ExchangeRate first = repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD")
+				.exchangeRate(BigDecimal.valueOf(0.000078))
+				.createdAt(LocalDateTime.of(2020, 8, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
-		ExchangeRate second = repo.save(
-				ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
-						.createdAt(LocalDateTime.of(2020, 9, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
+		ExchangeRate second = repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC")
+				.toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
+				.createdAt(LocalDateTime.of(2020, 9, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
-		ExchangeRate third = repo.save(
-				ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
-						.createdAt(LocalDateTime.of(2020, 10, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
+		ExchangeRate third = repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD")
+				.exchangeRate(BigDecimal.valueOf(0.000078))
+				.createdAt(LocalDateTime.of(2020, 10, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
 
 		List<ExchangeRate> results = repo.findAll(ExchangeRateSpecifications
 				.after(LocalDateTime.of(2020, 9, 1, 12, 00).atZone(ZoneOffset.UTC).toInstant()));
-		
+
 		assertThat(results).hasSize(2);
 		assertThat(results.get(0)).isEqualTo(second);
 		assertThat(results.get(1)).isEqualTo(third);
-		
+
 		results = repo.findAll(ExchangeRateSpecifications
 				.before(LocalDateTime.of(2020, 9, 1, 12, 00).atZone(ZoneOffset.UTC).toInstant()));
-		
+
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0)).isEqualTo(first);
-		
+
 		results = repo.findAll(ExchangeRateSpecifications
 				.after(LocalDateTime.of(2020, 9, 1, 12, 00).atZone(ZoneOffset.UTC).toInstant())
 				.and(ExchangeRateSpecifications
-				.before(LocalDateTime.of(2020, 10, 1, 12, 00).atZone(ZoneOffset.UTC).toInstant())));
-		
+						.before(LocalDateTime.of(2020, 10, 1, 12, 00).atZone(ZoneOffset.UTC).toInstant())));
+
 		assertThat(results).hasSize(1);
 		assertThat(results.get(0)).isEqualTo(second);
+
+	}
+
+	@Test
+	void latestRateQuery() {
+
+		repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD")
+				.exchangeRate(BigDecimal.valueOf(0.000078))
+				.createdAt(LocalDateTime.of(2020, 8, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
+
+		repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC").toCurrency("USD")
+				.exchangeRate(BigDecimal.valueOf(0.000078))
+				.createdAt(LocalDateTime.of(2020, 9, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
+
+		ExchangeRate latest = repo.save(ExchangeRate.builder().providerName("test").fromCurrency("BTC")
+				.toCurrency("USD").exchangeRate(BigDecimal.valueOf(0.000078))
+				.createdAt(LocalDateTime.of(2020, 10, 5, 12, 00).atZone(ZoneOffset.UTC).toInstant()).build());
+
+		Optional<ExchangeRate> result = repo.findTopByOrderByCreatedAtDesc();
+
+		assertThat(result).isNotEmpty();
+		assertThat(result.get()).isEqualTo(latest);
 
 	}
 

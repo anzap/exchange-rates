@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.business.providers.blockchain;
+package com.searchmetrics.exchangerates.providers.bitpay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,11 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.searchmetrics.exchangerates.business.exceptions.BusinessException;
-import com.searchmetrics.exchangerates.business.providers.bitpay.BitPayExchangeRateProvider;
 import com.searchmetrics.exchangerates.config.AppProperties;
 import com.searchmetrics.exchangerates.config.AppProperties.ProviderConfig;
 import com.searchmetrics.exchangerates.config.AppProperties.Providers;
+import com.searchmetrics.exchangerates.providers.exceptions.ProviderException;
 
 import io.netty.handler.timeout.ReadTimeoutException;
 import okhttp3.mockwebserver.MockResponse;
@@ -80,7 +79,7 @@ public class BitPayExchangeRateProviderTest {
 		mockBackEnd.enqueue(new MockResponse().setBody("{\"error\":\"Invalid base currency specified\"}")
 				.addHeader("Content-Type", "application/json"));
 
-		BusinessException exception = assertThrows(BusinessException.class,
+		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
 		assertThat(exception.getReason()).isEqualTo("Invalid base currency specified");
@@ -92,7 +91,7 @@ public class BitPayExchangeRateProviderTest {
 
 		mockBackEnd.enqueue(new MockResponse().addHeader("Content-Type", "application/json"));
 
-		BusinessException exception = assertThrows(BusinessException.class,
+		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
 		assertThat(exception.getReason()).isEqualTo("Unexpected response from bitpay provider received!");
@@ -105,7 +104,7 @@ public class BitPayExchangeRateProviderTest {
 		mockBackEnd.enqueue(new MockResponse().setBody("{\"code\":\"USD\",\"name\":\"US Dollar\",\"rate\":11513.27}")
 				.addHeader("Content-Type", "application/json"));
 
-		BusinessException exception = assertThrows(BusinessException.class,
+		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
 		assertThat(exception.getReason()).isEqualTo("Unexpected response from bitpay provider received!");
@@ -118,7 +117,7 @@ public class BitPayExchangeRateProviderTest {
 		mockBackEnd.enqueue(new MockResponse().setResponseCode(HttpStatus.BAD_REQUEST.value()).addHeader("Content-Type",
 				"application/json"));
 
-		BusinessException exception = assertThrows(BusinessException.class,
+		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
 		assertThat(exception.getReason()).isEqualTo("No exchange rate could be calculated for provided currencies!");
@@ -131,7 +130,7 @@ public class BitPayExchangeRateProviderTest {
 		mockBackEnd.enqueue(new MockResponse().setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.addHeader("Content-Type", "application/json"));
 
-		BusinessException exception = assertThrows(BusinessException.class,
+		ProviderException exception = assertThrows(ProviderException.class,
 				() -> provider.conversionRate("BTX", "USD"));
 
 		assertThat(exception.getReason()).isEqualTo("Rate provider connection failing!");

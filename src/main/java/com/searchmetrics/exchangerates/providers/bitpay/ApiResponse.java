@@ -1,4 +1,4 @@
-package com.searchmetrics.exchangerates.business.providers.bitpay;
+package com.searchmetrics.exchangerates.providers.bitpay;
 
 import java.math.BigDecimal;
 import java.util.Optional;
